@@ -8,3 +8,6 @@
 [submodule "ActsConnect_Frontend/ActsConnect_Frontend"]
 	path = ActsConnect_Frontend/ActsConnect_Frontend
 	url = https://github.com/AbhishekPandey10/ActsConnect_Frontend.git
+[submodule "acts-connect-backend"]
+	path = acts-connect-backend
+	url = https://github.com/AnuragCh2016/acts-connect-backend.git
