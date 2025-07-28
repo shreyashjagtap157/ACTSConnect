@@ -1,5 +1,3 @@
-// actions.js
-import axios from 'axios';
 import {
   CREATE_COMMENT_REQUEST,
   CREATE_COMMENT_SUCCESS,
@@ -11,31 +9,27 @@ import {
   DELETE_COMMENT_SUCCESS,
   DELETE_COMMENT_FAILURE,
 } from './comment.actionType';
-import { api } from '../../config/api';
+import { userApi } from '../../config/api';
+import { showToast } from '../../config/toast';
 
-const createCommentRequest = () => ({
-  type: CREATE_COMMENT_REQUEST,
-});
-
-const createCommentSuccess = (comment) => ({
-  type: CREATE_COMMENT_SUCCESS,
-  payload: comment,
-});
-
-const createCommentFailure = (error) => ({
-  type: CREATE_COMMENT_FAILURE,
-  payload: error,
-});
+const createCommentRequest = () => ({ type: CREATE_COMMENT_REQUEST });
+const createCommentSuccess = (comment) => ({ type: CREATE_COMMENT_SUCCESS, payload: comment });
+const createCommentFailure = (error) => ({ type: CREATE_COMMENT_FAILURE, payload: error });
 
 export const createComment = (reqData) => async (dispatch) => {
   dispatch(createCommentRequest());
-
   try {
-    const response = await api.post(`/api/comments/${reqData.postId}`, reqData.data);
-    console.log("created comment ---- ",response.data)
-    dispatch(createCommentSuccess(response.data));
+    const { data } = await userApi.createComment(reqData);
+    if (data.success) {
+      dispatch(createCommentSuccess(data.data));
+      showToast('Comment created!', 'success');
+    } else {
+      dispatch(createCommentFailure(data.message || 'Failed to create comment'));
+      showToast(data.message || 'Failed to create comment', 'error');
+    }
   } catch (error) {
-    dispatch(createCommentFailure(error));
+    dispatch(createCommentFailure(error.message || 'Network error'));
+    showToast(error.message || 'Network error', 'error');
   }
 };
 

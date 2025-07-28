@@ -22,15 +22,21 @@ public class CommentService {
   }
 
   public CommentResponse createComment(User user, Post post, CommentRequest commentRequest) {
+    if (user == null) {
+      throw new IllegalArgumentException("User cannot be null");
+    }
+    if (post == null) {
+      throw new IllegalArgumentException("Post cannot be null");
+    }
+    if (commentRequest == null || commentRequest.getText() == null || commentRequest.getText().trim().isEmpty()) {
+      throw new IllegalArgumentException("Comment text cannot be empty");
+    }
     Comment comment = new Comment();
     comment.setText(commentRequest.getText());
     comment.setPost(post);
     comment.setUser(user);
-//    comment.setUpdatedAt(LocalDateTime.now());
     commentRepo.save(comment);
-
-    CommentResponse commentResponse = new CommentResponse(comment.getId(),comment.getText(),comment.getCreatedAt());
-    return commentResponse;
+    return new CommentResponse(comment.getId(), comment.getText(), comment.getCreatedAt());
   }
 
 }

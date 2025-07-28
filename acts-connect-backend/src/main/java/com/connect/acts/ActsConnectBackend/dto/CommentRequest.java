@@ -1,5 +1,6 @@
 package com.connect.acts.ActsConnectBackend.dto;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.UUID;
@@ -9,6 +10,6 @@ public class CommentRequest {
     @NotBlank(message = "Text is required")
     private String text;
 
-    @NotBlank
+    @NotNull(message = "Post ID is required")
     private UUID postId;
 }

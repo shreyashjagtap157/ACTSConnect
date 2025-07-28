@@ -30,6 +30,9 @@ public class UserService {
   }
 
   public User findById(UUID userId) {
+    if (userId == null) {
+      throw new IllegalArgumentException("User ID cannot be null");
+    }
     return userRepo.findById(userId).orElse(null);
   }
 
@@ -62,6 +65,9 @@ public class UserService {
   }
 
   public List<User> searchUsers(UserSearchRequest searchRequest) {
+    if (searchRequest == null) {
+      throw new IllegalArgumentException("Search request cannot be null");
+    }
     return userRepo.searchUsers(
       searchRequest.getName(),
       searchRequest.getMinBatchYear(),

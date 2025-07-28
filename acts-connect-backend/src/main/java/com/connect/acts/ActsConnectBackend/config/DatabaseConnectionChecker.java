@@ -17,12 +17,16 @@ public class DatabaseConnectionChecker {
   }
 
   @PostConstruct
-  public void checkConnection() throws SQLException {
+  public void checkConnection() {
     try (Connection connection = dataSource.getConnection()) {
-      System.out.println("Database connection established successfully!");
+      if (connection.isValid(2)) {
+        System.out.println("Database connection established successfully!");
+      } else {
+        throw new SQLException("Connection is not valid.");
+      }
     } catch (SQLException e) {
-      System.err.println("Failed to establish database connection.");
-      e.printStackTrace();
+      System.err.println("Failed to establish database connection: " + e.getMessage());
+      throw new IllegalStateException("Database connection failed", e);
     }
   }
 }

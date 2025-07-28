@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import { Avatar, Backdrop, CircularProgress, IconButton } from "@mui/material";
+import LoadingSpinner from "../LoadingSpinner";
 import ImageIcon from "@mui/icons-material/Image";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import { uploadToCloudinary } from "../../utis/uploadToCloudniry";
@@ -29,7 +30,7 @@ export default function CreatePostModal({ handleClose, open }) {
   const [selectedVideo, setSelectedVideo] = React.useState();
   const [isLoading, setIsloading] = React.useState(false);
   const dispatch = useDispatch();
-  const { auth } = useSelector((store) => store);
+  const { auth, post } = useSelector((store) => store);
 
   const formik = useFormik({
     initialValues: {
@@ -38,15 +39,28 @@ export default function CreatePostModal({ handleClose, open }) {
       video: "",
     },
 
+    validate: (values) => {
+      const errors = {};
+      if (!values.caption && !values.image && !values.video) {
+        errors.caption = "Post must have a caption, image, or video.";
+      }
+      return errors;
+    },
     onSubmit: (values) => {
+      if (!values.caption && !values.image && !values.video) {
+        return;
+      }
       dispatch(createPost(values));
-      console.log("Form values:", values);
-      handleClose();
-
-      formik.resetForm();
-      setSelectedImage(null);
-      setSelectedVideo(null);
-      setIsloading(false);
+      // Wait for loading to finish, then close modal if no error
+      setTimeout(() => {
+        if (!post.error) {
+          handleClose();
+          formik.resetForm();
+          setSelectedImage(null);
+          setSelectedVideo(null);
+        }
+        setIsloading(false);
+      }, 1000);
     },
   });
 
@@ -75,6 +89,12 @@ export default function CreatePostModal({ handleClose, open }) {
     >
       <Box sx={style}>
         <form onSubmit={formik.handleSubmit}>
+          {post.loading && <LoadingSpinner message="Posting..." />}
+          {post.error && (
+            <div className="flex justify-center items-center py-2">
+              <span className="text-red-600">{post.error}</span>
+            </div>
+          )}
           <div className="">
             <div className="flex space-x-4 items-center">
               <Avatar alt={auth.user?.firstName} src={auth.user?.profilePicture} />
@@ -96,6 +116,9 @@ export default function CreatePostModal({ handleClose, open }) {
               value={formik.values.caption}
               onChange={formik.handleChange}
             />
+            {formik.errors.caption && (
+              <div className="text-red-600 text-sm mt-1">{formik.errors.caption}</div>
+            )}
 
             <div className="flex space-x-5 items-center mt-5">
               <div>

@@ -9,6 +9,7 @@ import CreatePostModal from "../../components/CreatePost/CreatePostModal";
 import AddIcon from "@mui/icons-material/Add";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllPost } from "../../Redux/Post/post.action";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 const MiddlePart = () => {
   const [openCreatePostModal, setOpenCreatePostModal] = useState(false);
@@ -24,6 +25,12 @@ const MiddlePart = () => {
 
   return (
     <div className="px-20">
+      {post.loading && <LoadingSpinner message="Loading posts..." />}
+      {post.error && (
+        <div className="flex justify-center items-center py-4">
+          <span className="text-red-600">{post.error}</span>
+        </div>
+      )}
       <div className="card p-5 mt-5">
         <div className="flex justify-between">
           <Avatar sx={{ bgcolor:"#212534",color:"rgb(88,199,250)" }} className="bg-[black]" />

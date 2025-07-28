@@ -45,41 +45,50 @@ public class PostService {
   }
 
   public PostDTO createPost(User user, PostRequestDTO postRequestDTO) {
+    if (user == null) {
+      throw new IllegalArgumentException("User cannot be null");
+    }
+    if (postRequestDTO == null || postRequestDTO.getTitle() == null || postRequestDTO.getTitle().trim().isEmpty()) {
+      throw new IllegalArgumentException("Post title cannot be empty");
+    }
     Post post = new Post();
     post.setTitle(postRequestDTO.getTitle());
     post.setContent(postRequestDTO.getContent());
     post.setUser(user);
     post.setDummy(false);
-
     postRepo.save(post);
-
-    PostDTO postDTO = new PostDTO(post.getId(), post.getTitle(), post.getContent(), post.isDummy(), post.getCreatedAt(), post.getUpdatedAt(), post.getUser().getId(), post.getUser().getName());
-    return postDTO;
+    return new PostDTO(post.getId(), post.getTitle(), post.getContent(), post.isDummy(), post.getCreatedAt(), post.getUpdatedAt(), post.getUser().getId(), post.getUser().getName());
   }
 
   public Post findById(UUID postId) {
-    Optional<Post> post = postRepo.findById(postId);
-    return post.orElse(null); // or throw an exception if preferred
+    if (postId == null) {
+      throw new IllegalArgumentException("Post ID cannot be null");
+    }
+    return postRepo.findById(postId).orElse(null);
   }
 
   public PostDTO editPost(User user, UUID postId, PostRequestDTO postRequestDTO) {
+    if (user == null || postId == null || postRequestDTO == null) {
+      return null;
+    }
     Optional<Post> postOptional = postRepo.findById(postId);
-
     if (postOptional.isPresent()) {
       Post post = postOptional.get();
       if (post.getUser().equals(user)) {
         post.setTitle(postRequestDTO.getTitle());
         post.setContent(postRequestDTO.getContent());
         post = postRepo.save(post);
-        return new PostDTO(post.getId(), post.getTitle(), post.getContent(), post.getCreatedAt(), post.getUser().getId());
+        return new PostDTO(post.getId(), post.getTitle(), post.getContent(), post.isDummy(), post.getCreatedAt(), post.getUpdatedAt(), post.getUser().getId(), post.getUser().getName());
       }
     }
     return null;
   }
 
   public boolean deletePost(User user, UUID postId) {
+    if (user == null || postId == null) {
+      return false;
+    }
     Optional<Post> postOptional = postRepo.findById(postId);
-
     if (postOptional.isPresent()) {
       Post post = postOptional.get();
       if (post.getUser().equals(user)) {

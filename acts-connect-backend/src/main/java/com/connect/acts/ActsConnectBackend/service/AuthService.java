@@ -22,9 +22,14 @@ public class AuthService {
   }
 
   public UserResponse registerUser(RegisterRequest registerRequest) {
-    // register user
+    if (registerRequest == null || registerRequest.getEmail() == null || registerRequest.getPassword() == null) {
+      throw new IllegalArgumentException("Email and password are required");
+    }
     if(authRepo.findByEmail(registerRequest.getEmail()).isPresent()) {
-      throw new RuntimeException("Email already exists");
+      UserResponse response = new UserResponse();
+      response.setStatus(409); // Conflict
+      response.setJwtToken(null);
+      return response;
     }
     User user = new User();
     user.setEmail(registerRequest.getEmail());
@@ -54,18 +59,19 @@ public class AuthService {
     response.setJwtToken(jwtToken);
     response.setStatus(201);
     return response;
-
   }
 
   public UserResponse loginUser(LoginRequest loginRequest) {
-    // login logic
-    User user = authRepo.findByEmail(loginRequest.getEmail())
-      .orElseThrow(() -> new RuntimeException("Invalid credentials"));
-
-    if (!bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-      throw new RuntimeException("Invalid credentials");
+    if (loginRequest == null || loginRequest.getEmail() == null || loginRequest.getPassword() == null) {
+      throw new IllegalArgumentException("Email and password are required");
     }
-
+    User user = authRepo.findByEmail(loginRequest.getEmail()).orElse(null);
+    if (user == null || !bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+      UserResponse response = new UserResponse();
+      response.setStatus(401); // Unauthorized
+      response.setJwtToken(null);
+      return response;
+    }
     // successful login
     String jwtToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getUserType());
     UserResponse response = new UserResponse();

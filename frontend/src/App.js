@@ -20,6 +20,7 @@ import ViewJobPosting from './pages/Jobs/AddJobPosting';
 import { Pages } from '@mui/icons-material';
 import AddJobPosting from './pages/Jobs/ViewJobPostings';
 import FindPeoplePage from './pages/FindPeople/FindPeoplePage';
+import TokenExpiredHandler from './components/TokenExpiredHandler';
 function App() {
   const dispatch=useDispatch();
   const {auth}=useSelector(store=>store)
@@ -33,6 +34,7 @@ function App() {
 
   return (
     <ThemeProvider theme={darkTheme}>
+      <TokenExpiredHandler />
       <Routes>
         <Route path='/*' element={auth.user? <HomePage/>:<Authentication/>}/>
         <Route path="/messages" element={<MessagePage/>} />
@@ -46,7 +48,6 @@ function App() {
         <Route path="/add-job" element={<AddJobPosting />} />
         <Route path="/find-people" element={<FindPeoplePage />} />
       </Routes>
-     
     </ThemeProvider>
   );
 }

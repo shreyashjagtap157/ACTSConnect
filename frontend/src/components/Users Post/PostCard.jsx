@@ -15,19 +15,27 @@ import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createComment, likeComment } from "../../Redux/Comment/comment.action";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { Divider } from "@mui/material";
 import { likePost, savePost } from "../../Redux/Post/post.action";
+import LoadingSpinner from "../LoadingSpinner";
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 export default function PostCard({ item }) {
   const [showComment, setShowComment] = React.useState(false);
   const dispatch = useDispatch();
+  const { comment } = useSelector((store) => store);
 
+  const [commentError, setCommentError] = React.useState("");
   const handleCreateComment = (content) => {
+    if (!content || content.trim() === "") {
+      setCommentError("Comment cannot be empty.");
+      return;
+    }
+    setCommentError("");
     dispatch(createComment({ postId: item?.id, data: { content } }));
   };
 
@@ -104,21 +112,29 @@ dispatch(likePost(item?.id))
             <Avatar sx={{bgcolor:"#212534",color:"rgb(88,199,250)"}}/>
             <input
               onKeyPress={(e) => {
-                console.log("e", e.target.value);
                 if (e.key === "Enter") {
-                  console.log("--------");
                   handleCreateComment(e.target.value);
+                  if (e.target.value.trim() !== "") e.target.value = "";
                 }
               }}
               className="w-full outline-none bg-transparent border border-[#3b4054] rounded-full px-5 py-2"
               type="text"
               placeholder="write your comment..."
             />
+            {commentError && (
+              <div className="text-red-600 text-sm mt-1">{commentError}</div>
+            )}
           </div>
+          {comment.loading && <LoadingSpinner message="Posting comment..." />}
+          {comment.error && (
+            <div className="flex justify-center items-center py-1">
+              <span className="text-red-600">{comment.error}</span>
+            </div>
+          )}
           <Divider />
           <div className="mx-3 space-y-2 my-5 text-xs">
             {item?.comments.map((comment) => (
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center" key={comment.id}>
                 <div className="flex items-center space-x-5">
                   <Avatar
                     sx={{ height: "2rem", width: "2rem", fontSize: ".8rem",bgcolor:"#212534",color:"rgb(88,199,250)" }}
