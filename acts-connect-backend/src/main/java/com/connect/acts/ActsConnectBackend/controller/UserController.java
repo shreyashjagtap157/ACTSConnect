@@ -219,7 +219,7 @@ public class UserController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<ApiResponse<List<UUID>>> searchUsers(@RequestHeader("Authorization") String token, @RequestBody @Valid UserSearchRequest searchRequest) {
+    public ResponseEntity<ApiResponse<List<UserResponseDTO>>> searchUsers(@RequestHeader("Authorization") String token, @RequestBody @Valid UserSearchRequest searchRequest) {
         String email = extractEmailFromToken(token);
         User loggedInUser = userService.findByEmail(email);
 
@@ -230,15 +230,23 @@ public class UserController {
         }
 
         List<User> users = userService.searchUsers(searchRequest);
-        List<UUID> userIds = users.stream().map(User::getId).collect(Collectors.toList());
+        List<UserResponseDTO> userDTOs = users.stream().map(user -> new UserResponseDTO(
+            user.getId(),
+            user.getName(),
+            user.getEmail(),
+            user.getCompany(),
+            user.getCourseType(),
+            user.getBatchYear(),
+            user.getProfilePictureUrl()
+        )).collect(Collectors.toList());
 
-        return ResponseEntity.ok(ApiResponse.success("Users found", userIds));
+        return ResponseEntity.ok(ApiResponse.success("Users found", userDTOs));
     }
 
     // Asynchronous version for multithreaded processing
     @Async
     @PostMapping("/search/async")
-    public CompletableFuture<ResponseEntity<ApiResponse<List<UUID>>>> searchUsersAsync(@RequestHeader("Authorization") String token, @RequestBody @Valid UserSearchRequest searchRequest) {
+    public CompletableFuture<ResponseEntity<ApiResponse<List<UserResponseDTO>>>> searchUsersAsync(@RequestHeader("Authorization") String token, @RequestBody @Valid UserSearchRequest searchRequest) {
         return CompletableFuture.completedFuture(searchUsers(token, searchRequest));
     }
 
@@ -258,7 +266,8 @@ public class UserController {
             user.getEmail(),
             user.getCompany(),
             user.getCourseType(),
-            user.getBatchYear()
+            user.getBatchYear(),
+            user.getProfilePictureUrl()
         );
 
         return ResponseEntity.ok(ApiResponse.success("User found", userResponseDTO));
@@ -269,6 +278,27 @@ public class UserController {
     @GetMapping("/{id}/async")
     public CompletableFuture<ResponseEntity<ApiResponse<UserResponseDTO>>> getUserAsync(@PathVariable UUID id) {
         return CompletableFuture.completedFuture(getUser(id));
+    }
+
+
+    @PostMapping("/post/like/{postId}")
+    public ResponseEntity<ApiResponse<PostDTO>> likePost(@RequestHeader("Authorization") String token, @PathVariable UUID postId) {
+        String email = extractEmailFromToken(token);
+        User user = userService.findByEmail(email);
+        PostDTO updatedPost = postService.likePost(user, postId);
+        if (updatedPost == null) {
+            logger.warn("Post not found for like: {}", postId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error("Post not found", null));
+        }
+        return ResponseEntity.ok(ApiResponse.success("Successfully Liked/Unliked!", updatedPost));
+    }
+
+    // Asynchronous version for multithreaded processing
+    @Async
+    @PostMapping("/post/like/{postId}/async")
+    public CompletableFuture<ResponseEntity<ApiResponse<PostDTO>>> likePostAsync(@RequestHeader("Authorization") String token, @PathVariable UUID postId) {
+        return CompletableFuture.completedFuture(likePost(token, postId));
     }
 
     private String extractEmailFromToken(String token) {

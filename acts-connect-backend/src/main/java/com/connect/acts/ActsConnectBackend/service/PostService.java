@@ -137,4 +137,23 @@ public class PostService {
   }
 
 
+
+  public PostDTO likePost(User user, UUID postId) {
+    if (user == null || postId == null) {
+      return null;
+    }
+    Optional<Post> postOptional = postRepo.findById(postId);
+    if (postOptional.isPresent()) {
+      Post post = postOptional.get();
+      if (!post.getLikedByUsers().contains(user)) {
+        post.getLikedByUsers().add(user);
+      } else {
+        post.getLikedByUsers().remove(user);
+      }
+      post = postRepo.save(post);
+      return new PostDTO(post.getId(), post.getTitle(), post.getContent(), post.isDummy(), post.getCreatedAt(), post.getUpdatedAt(), post.getUser().getId(), post.getUser().getName());
+    }
+    return null;
+  }
+
 }

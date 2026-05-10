@@ -1,26 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Container, Typography } from '@mui/material';
 import PopularUserCard from '../../components/HomeRight/PopularUserCard';
-import axios from 'axios'; 
+import axios from 'axios';
+import { userApi } from '../../config/api';
 import SearchUser from '../../components/SearchUser/SearchUser'; 
 
 const courses = ['DAC', 'DASSD', 'DMC', 'DVLSI', 'DESD', 'DIOT', 'DRAT', 'DUASP', 'DAI', 'DBDA', 'DHPCAP', 'DHPCSA', 'DITISS', 'DCSF', 'DFBD'];
 
 const FindPeople = () => {
-  const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchName, setSearchName] = useState('');
   const [selectedBatchYear, setSelectedBatchYear] = useState('');
   const [selectedCourse, setSelectedCourse] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [searchResults, setSearchResults] = useState([]);
+
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchFilteredUsers = async () => {
+      setIsLoading(true);
       try {
-        const response = await axios.get('/api/users'); 
-        setUsers(response.data);
-        setFilteredUsers(response.data);
+        const searchData = {
+          name: searchName || null,
+          minBatchYear: selectedBatchYear || null,
+          maxBatchYear: selectedBatchYear || null,
+          courseType: selectedCourse || null,
+          company: null
+        };
+        const response = await userApi.searchUsers(searchData);
+        // The backend now returns a List<UserResponseDTO> which contains image, name, company, courseType, etc.
+        setFilteredUsers(response.data.data || []);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -28,37 +36,12 @@ const FindPeople = () => {
       }
     };
 
-    fetchUsers();
-  }, []);
-
-  // Handle user search
-  const handleSearch = async (query) => {
-    try {
-      const response = await axios.get(`/api/search/users?query=${query}`); 
-      setSearchResults(response.data);
-    } catch (error) {
-      console.error('Error searching users:', error);
-    }
-  };
-
-  useEffect(() => {
-    const applyFilters = () => {
-      const filtered = users.filter(user => {
-        const matchesName = user.name.toLowerCase().includes(searchName.toLowerCase());
-        const matchesBatchYear = selectedBatchYear ? user.batchYear === selectedBatchYear : true;
-        const matchesCourse = selectedCourse ? user.course === selectedCourse : true;
-        return matchesName && matchesBatchYear && matchesCourse;
-      });
-      setFilteredUsers(filtered);
-    };
-
-    applyFilters();
-  }, [searchName, selectedBatchYear, selectedCourse, users]);
+    fetchFilteredUsers();
+  }, [searchName, selectedBatchYear, selectedCourse]);
 
   // Handle search input change
   const handleSearchNameChange = (event) => {
     setSearchName(event.target.value);
-    handleSearch(event.target.value); // Perform search
   };
 
   // Handle select changes
@@ -90,29 +73,16 @@ const FindPeople = () => {
           <Typography>Loading...</Typography>
         ) : (
           <Grid container spacing={3}>
-            {searchResults.length > 0 ? (
-              searchResults.map((user) => (
-                <Grid item xs={12} sm={6} md={4} key={user.id}>
-                  <PopularUserCard
-                    image={user.image}
-                    username={user.name}
-                    description={user.description}
-                    onClick={() => console.log(`Clicked on user ${user.id}`)} 
-                  />
-                </Grid>
-              ))
-            ) : (
-              filteredUsers.map((user) => (
-                <Grid item xs={12} sm={6} md={4} key={user.id}>
-                  <PopularUserCard
-                    image={user.image}
-                    username={user.name}
-                    description={user.description}
-                    onClick={() => console.log(`Clicked on user ${user.id}`)} 
-                  />
-                </Grid>
-              ))
-            )}
+            {filteredUsers.map((user) => (
+              <Grid item xs={12} sm={6} md={4} key={user.id}>
+                <PopularUserCard
+                  image={user.profilePictureUrl}
+                  username={user.name}
+                  description={user.company || user.courseType || ''}
+                  onClick={() => console.log(`Clicked on user ${user.id}`)}
+                />
+              </Grid>
+            ))}
           </Grid>
         )}
       </Container>

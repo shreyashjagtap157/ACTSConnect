@@ -26,11 +26,10 @@ function App() {
   const {auth}=useSelector(store=>store)
 
   useEffect(()=>{
-    const jwt=localStorage.getItem("jwt")
-    if(jwt){
-      dispatch(getUserProfile(jwt))
-    }
-  },[auth.jwt])
+    // Always attempt to fetch the user profile on load.
+    // The backend will reject the request if the HttpOnly cookie is missing or invalid.
+    dispatch(getUserProfile())
+  },[dispatch])
 
   return (
     <ThemeProvider theme={darkTheme}>

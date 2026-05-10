@@ -1,26 +1,44 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { logout } from '../Redux/Auth/auth.action';
+import axios from 'axios';
+import { api } from '../config/api';
 
-// Checks JWT expiry and logs out if expired
+// Sets up an Axios interceptor to handle 401 Unauthorized responses
 const TokenExpiredHandler = () => {
   const dispatch = useDispatch();
+
   useEffect(() => {
-    const checkToken = () => {
-      const token = localStorage.getItem('jwt');
-      if (!token) return;
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.exp && Date.now() >= payload.exp * 1000) {
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response && error.response.status === 401) {
+          // Token is likely expired or invalid
           dispatch(logout());
-          window.location.href = '/login';
+          window.location.href = '/';
         }
-      } catch (e) {}
+        return Promise.reject(error);
+      }
+    );
+
+    const apiInterceptor = api.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response && error.response.status === 401) {
+          // Token is likely expired or invalid
+          dispatch(logout());
+          window.location.href = '/';
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      axios.interceptors.response.eject(interceptor);
+      api.interceptors.response.eject(apiInterceptor);
     };
-    checkToken();
-    const interval = setInterval(checkToken, 60000); // check every minute
-    return () => clearInterval(interval);
   }, [dispatch]);
+
   return null;
 };
 
