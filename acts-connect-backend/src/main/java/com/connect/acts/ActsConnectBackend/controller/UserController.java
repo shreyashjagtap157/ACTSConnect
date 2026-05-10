@@ -198,7 +198,7 @@ public class UserController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<ApiResponse<List<UUID>>> searchUsers(@RequestHeader("Authorization") String token, @RequestBody @Valid UserSearchRequest searchRequest) {
+    public ResponseEntity<ApiResponse<List<UserResponseDTO>>> searchUsers(@RequestHeader("Authorization") String token, @RequestBody @Valid UserSearchRequest searchRequest) {
         String email = extractEmailFromToken(token);
         User loggedInUser = userService.findByEmail(email);
 
@@ -209,15 +209,23 @@ public class UserController {
         }
 
         List<User> users = userService.searchUsers(searchRequest);
-        List<UUID> userIds = users.stream().map(User::getId).collect(Collectors.toList());
+        List<UserResponseDTO> userDTOs = users.stream().map(user -> new UserResponseDTO(
+            user.getId(),
+            user.getName(),
+            user.getEmail(),
+            user.getCompany(),
+            user.getCourseType(),
+            user.getBatchYear(),
+            user.getProfilePictureUrl()
+        )).collect(Collectors.toList());
 
-        return ResponseEntity.ok(ApiResponse.success("Users found", userIds));
+        return ResponseEntity.ok(ApiResponse.success("Users found", userDTOs));
     }
 
     // Asynchronous version for multithreaded processing
     @Async
     @PostMapping("/search/async")
-    public CompletableFuture<ResponseEntity<ApiResponse<List<UUID>>>> searchUsersAsync(@RequestHeader("Authorization") String token, @RequestBody @Valid UserSearchRequest searchRequest) {
+    public CompletableFuture<ResponseEntity<ApiResponse<List<UserResponseDTO>>>> searchUsersAsync(@RequestHeader("Authorization") String token, @RequestBody @Valid UserSearchRequest searchRequest) {
         return CompletableFuture.completedFuture(searchUsers(token, searchRequest));
     }
 
@@ -237,7 +245,8 @@ public class UserController {
             user.getEmail(),
             user.getCompany(),
             user.getCourseType(),
-            user.getBatchYear()
+            user.getBatchYear(),
+            user.getProfilePictureUrl()
         );
 
         return ResponseEntity.ok(ApiResponse.success("User found", userResponseDTO));
