@@ -37,7 +37,6 @@ const ProfileModel = ({ handleClose, open }) => {
 
   const handleSubmit = (values) => {
     dispatch(updateUserProfile(values));
-    console.log(values);
     handleClose();
   };
   const formik = useFormik({
