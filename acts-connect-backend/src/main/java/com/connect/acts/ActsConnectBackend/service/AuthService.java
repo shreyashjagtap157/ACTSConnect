@@ -15,10 +15,10 @@ public class AuthService {
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final JwtUtil jwtUtil;
 
-  public AuthService(AuthRepo authRepo) {
+  public AuthService(AuthRepo authRepo, BCryptPasswordEncoder bCryptPasswordEncoder, JwtUtil jwtUtil) {
     this.authRepo = authRepo;
-    this.bCryptPasswordEncoder = new BCryptPasswordEncoder();
-    this.jwtUtil = new JwtUtil();
+    this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    this.jwtUtil = jwtUtil;
   }
 
   public UserResponse registerUser(RegisterRequest registerRequest) {
