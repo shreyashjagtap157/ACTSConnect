@@ -99,6 +99,27 @@ public class UserController {
         return CompletableFuture.completedFuture(editPost(token, postId, postRequestDTO));
     }
 
+
+    @PostMapping("/post/like/{postId}")
+    public ResponseEntity<ApiResponse<PostDTO>> likePost(@RequestHeader("Authorization") String token, @PathVariable UUID postId) {
+        String email = extractEmailFromToken(token);
+        User user = userService.findByEmail(email);
+        PostDTO updatedPost = postService.likePost(user, postId);
+        if (updatedPost == null) {
+            logger.warn("Post not found for like: {}", postId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error("Post not found", null));
+        }
+        return ResponseEntity.ok(ApiResponse.success("Successfully toggled like!", updatedPost));
+    }
+
+    // Asynchronous version for multithreaded processing
+    @Async
+    @PostMapping("/post/like/{postId}/async")
+    public CompletableFuture<ResponseEntity<ApiResponse<PostDTO>>> likePostAsync(@RequestHeader("Authorization") String token, @PathVariable UUID postId) {
+        return CompletableFuture.completedFuture(likePost(token, postId));
+    }
+
     @DeleteMapping("/post/delete/{postId}")
     public ResponseEntity<ApiResponse<String>> deletePost(@RequestHeader("Authorization") String token, @PathVariable UUID postId) {
         String email = extractEmailFromToken(token);

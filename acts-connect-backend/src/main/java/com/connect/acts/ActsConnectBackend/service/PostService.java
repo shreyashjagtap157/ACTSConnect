@@ -32,6 +32,22 @@ public class PostService {
       posts = postRepo.findRecentPosts(followingUsers);
     }
 
+    // Populate likedByRequser flag and likedByUsers list
+    for (PostDTO postDTO : posts) {
+        Optional<Post> postOpt = postRepo.findById(postDTO.getId());
+        if (postOpt.isPresent()) {
+            Post post = postOpt.get();
+            Set<User> likedUsers = post.getLikedByUsers();
+            if (likedUsers != null) {
+                postDTO.setLikedByUsers(likedUsers.stream().map(User::getId).collect(Collectors.toList()));
+                postDTO.setLikedByRequser(likedUsers.contains(user));
+            } else {
+                postDTO.setLikedByUsers(new ArrayList<>());
+                postDTO.setLikedByRequser(false);
+            }
+        }
+    }
+
     return posts;
   }
 
@@ -71,6 +87,36 @@ public class PostService {
         post = postRepo.save(post);
         return new PostDTO(post.getId(), post.getTitle(), post.getContent(), post.isDummy(), post.getCreatedAt(), post.getUpdatedAt(), post.getUser().getId(), post.getUser().getName());
       }
+    }
+    return null;
+  }
+
+
+  public PostDTO likePost(User user, UUID postId) {
+    if (user == null || postId == null) {
+      throw new IllegalArgumentException("User and Post ID cannot be null");
+    }
+
+    Optional<Post> postOptional = postRepo.findById(postId);
+    if (postOptional.isPresent()) {
+      Post post = postOptional.get();
+      Set<User> likedByUsers = post.getLikedByUsers();
+      if (likedByUsers == null) {
+        likedByUsers = new HashSet<>();
+        post.setLikedByUsers(likedByUsers);
+      }
+
+      if (!likedByUsers.contains(user)) {
+        likedByUsers.add(user);
+      } else {
+        likedByUsers.remove(user);
+      }
+
+      post = postRepo.save(post);
+      PostDTO dto = new PostDTO(post.getId(), post.getTitle(), post.getContent(), post.isDummy(), post.getCreatedAt(), post.getUpdatedAt(), post.getUser().getId(), post.getUser().getName());
+      dto.setLikedByUsers(post.getLikedByUsers().stream().map(User::getId).collect(Collectors.toList()));
+      dto.setLikedByRequser(post.getLikedByUsers().contains(user));
+      return dto;
     }
     return null;
   }
