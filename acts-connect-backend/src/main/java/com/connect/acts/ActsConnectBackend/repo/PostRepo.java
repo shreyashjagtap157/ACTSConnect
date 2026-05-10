@@ -26,4 +26,10 @@ public interface PostRepo extends JpaRepository<Post, UUID> {
     "FROM Post p WHERE p.user IN :followingUsers ORDER BY p.createdAt DESC")
   List<PostDTO> findRecentPosts(@Param("followingUsers") Set<User> followingUsers);
 
+  @Query("SELECT new com.connect.acts.ActsConnectBackend.dto.PostDTO(" +
+    "p.id, p.title, p.content, p.isDummy, p.createdAt, p.updatedAt, " +
+    "p.user.id, p.user.name) " +
+    "FROM Post p WHERE p.isDummy = true OR p.user IN :followingUsers ORDER BY p.createdAt DESC")
+  List<PostDTO> findCombinedPosts(@Param("followingUsers") Set<User> followingUsers);
+
 }

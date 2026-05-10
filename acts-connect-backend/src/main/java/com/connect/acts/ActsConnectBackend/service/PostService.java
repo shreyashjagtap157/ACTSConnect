@@ -27,16 +27,7 @@ public class PostService {
 
     List<PostDTO> posts;
     if (followingCount < 3) {
-      List<PostDTO> dummyPosts = postRepo.findDummyPosts();
-      List<PostDTO> recentPosts = postRepo.findRecentPosts(followingUsers);
-      posts = new ArrayList<>();
-      posts.addAll(dummyPosts);
-      posts.addAll(recentPosts);
-
-      // sort posts in descending oder
-      posts = posts.stream()
-        .sorted(Comparator.comparing(PostDTO::getCreatedAt).reversed())
-        .collect(Collectors.toList());
+      posts = postRepo.findCombinedPosts(followingUsers);
     } else {
       posts = postRepo.findRecentPosts(followingUsers);
     }
