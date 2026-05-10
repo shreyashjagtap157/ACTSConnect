@@ -50,7 +50,6 @@ const Demo = () => {
 
   const handleSend = (callType) => {
     const callee = document.querySelector('#userID').value;
-    console.log("calleeeeeeeeeeeeeeeeeeeeeee ", callee);
     if (!callee) {
       alert('userID cannot be empty!!');
       return;
