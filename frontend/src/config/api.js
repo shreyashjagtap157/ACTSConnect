@@ -24,6 +24,8 @@ export const userApi = {
   followUser: (userId) => api.post(`/api/user/follow/${userId}`, {}, { headers: getAuthHeaders() }),
   unfollowUser: (userId) => api.post(`/api/user/unfollow/${userId}`, {}, { headers: getAuthHeaders() }),
   createComment: (data) => api.post('/api/user/comment/create', data, { headers: getAuthHeaders() }),
+  likeComment: (commentId) => api.put(`/api/user/comment/like/${commentId}`, {}, { headers: getAuthHeaders() }),
+  deleteComment: (commentId) => api.delete(`/api/user/comment/delete/${commentId}`, { headers: getAuthHeaders() }),
   searchUsers: (searchData) => api.post('/api/user/search', searchData, { headers: getAuthHeaders() }),
   getUser: (id) => api.get(`/api/user/${id}`, { headers: getAuthHeaders() }),
 };
