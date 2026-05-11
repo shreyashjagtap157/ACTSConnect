@@ -11,7 +11,6 @@ import Authentication from "../Authentication/Authentication";
 
 const HomePage = () => {
   const location = useLocation();
-  console.log("location", location);
   const {auth}=useSelector(store=>store)
 
   return (

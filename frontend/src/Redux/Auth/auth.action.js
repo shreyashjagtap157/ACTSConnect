@@ -31,23 +31,13 @@ import {
 import { API_BASE_URL, api } from "../../config/api.js";
 import { GET_PROFILE_FAILURE } from "./auth.actionType.js";
 
-
-
-
-
-
-
-
 export const loginUser = (loginData) => async (dispatch) => {
   dispatch({type:LOGIN_REQUEST});
   try {
-    const response = await axios.post(`${API_BASE_URL}/auth/signin`, loginData.data);
+    const response = await axios.post(`${API_BASE_URL}/api/auth/login`, loginData.data, { withCredentials: true });
     const user = response.data;
     console.log("login user -: ", user);
-    if (user.jwt) {
-      localStorage.setItem("jwt", user.jwt);
-      loginData.navigate("/")
-    }
+    loginData.navigate("/");
     dispatch({type:LOGIN_SUCCESS,payload:user});
   } catch (error) {
     console.log("error ",error)
@@ -55,16 +45,12 @@ export const loginUser = (loginData) => async (dispatch) => {
   }
 };
 
-
 export const registerUser = (userData) => async (dispatch) => {
   dispatch({type:REGISTER_REQUEST});
   try {
-    const response = await axios.post(`${API_BASE_URL}/auth/signup`, userData);
+    const response = await axios.post(`${API_BASE_URL}/api/auth/register`, userData, { withCredentials: true });
     const user = response.data;
     console.log("created user - : ", user);
-    if (user.jwt) {
-      localStorage.setItem("jwt", user.jwt);
-    }
     dispatch({type:REGISTER_SUCCESS,payload:user});
   } catch (error) {
     dispatch(
@@ -73,15 +59,10 @@ export const registerUser = (userData) => async (dispatch) => {
   }
 };
 
-export const getUserProfile = (jwt) => async (dispatch) => {
+export const getUserProfile = () => async (dispatch) => {
   dispatch({type:GET_PROFILE_REUEST});
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/users/profile`,{
-      headers:{
-        "Authorization":`Bearer ${jwt}`,
-
-      }
-    });
+    const response = await axios.get(`${API_BASE_URL}/api/users/profile`, { withCredentials: true });
     const user = response.data;
     console.log("login user -: ", user);
    
@@ -182,8 +163,12 @@ export const resetPassword = (reqData) => async (dispatch) => {
   }
 };
 
-export const logout = (navigate) => (dispatch) => {
-  // navigate("/")
-  localStorage.removeItem("jwt");
-  dispatch({ type: LOGOUT, payload: null });
+export const logout = (navigate) => async (dispatch) => {
+  try {
+    await axios.post(`${API_BASE_URL}/api/auth/logout`, {}, { withCredentials: true });
+    dispatch({ type: LOGOUT, payload: null });
+  } catch (error) {
+    console.log("error during logout", error);
+    dispatch({ type: LOGOUT, payload: null }); // Still clear frontend state
+  }
 };
