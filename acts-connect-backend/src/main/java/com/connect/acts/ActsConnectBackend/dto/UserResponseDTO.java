@@ -15,4 +15,5 @@ public class UserResponseDTO {
   private String company;
   private Course courseType;
   private int batchYear;
+  private String profilePictureUrl;
 }
