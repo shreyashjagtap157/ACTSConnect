@@ -34,14 +34,35 @@ export const createComment = (reqData) => async (dispatch) => {
 };
 
 export const likeComment = (commentId) => async (dispatch) => {
-    dispatch({type:CREATE_COMMENT_REQUEST});
-  
-    try {
-      const {data} = await api.post(`/api/comments/${commentId}`);
-      dispatch({type:CREATE_COMMENT_SUCCESS, payload:data});
-    } catch (error) {
-      dispatch({type:CREATE_COMMENT_FAILURE,payload:error});
+  dispatch({ type: LIKE_COMMENT_REQUEST });
+  try {
+    const { data } = await userApi.likeComment(commentId);
+    if (data.success) {
+      dispatch({ type: LIKE_COMMENT_SUCCESS, payload: data.data });
+      showToast('Comment liked!', 'success');
+    } else {
+      dispatch({ type: LIKE_COMMENT_FAILURE, payload: data.message || 'Failed to like comment' });
+      showToast(data.message || 'Failed to like comment', 'error');
     }
-  };
+  } catch (error) {
+    dispatch({ type: LIKE_COMMENT_FAILURE, payload: error.message || 'Network error' });
+    showToast(error.message || 'Network error', 'error');
+  }
+};
 
-// Similarly, create action creators for LIKE_COMMENT and DELETE_COMMENT
+export const deleteComment = (commentId) => async (dispatch) => {
+  dispatch({ type: DELETE_COMMENT_REQUEST });
+  try {
+    const { data } = await userApi.deleteComment(commentId);
+    if (data.success) {
+      dispatch({ type: DELETE_COMMENT_SUCCESS, payload: commentId });
+      showToast('Comment deleted!', 'success');
+    } else {
+      dispatch({ type: DELETE_COMMENT_FAILURE, payload: data.message || 'Failed to delete comment' });
+      showToast(data.message || 'Failed to delete comment', 'error');
+    }
+  } catch (error) {
+    dispatch({ type: DELETE_COMMENT_FAILURE, payload: error.message || 'Network error' });
+    showToast(error.message || 'Network error', 'error');
+  }
+};
