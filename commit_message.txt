@@ -1,0 +1,10 @@
+🔒 Fix: Replace System.err.println with SLF4J logger
+
+🎯 **What:** The vulnerability fixed
+In JwtAuthenticationEntryPoint, unauthorized access attempts were being logged using System.err.println instead of the standard SLF4J logger.
+
+⚠️ **Risk:** The potential impact if left unfixed
+Using standard out/error for logging is insecure and inefficient. It bypasses the configured logging framework (SLF4J/Logback), which means logs might be lost, unformatted, or not properly rotated, potentially missing important security auditing trails for unauthorized access. It also risks exposing sensitive data if it isn't properly managed or filtered by the logging setup.
+
+🛡️ **Solution:** How the fix addresses the vulnerability
+Replaced System.err.println with an SLF4J Logger.warn call. This ensures that unauthorized access attempts are consistently recorded using the application's configured logging pipeline, matching standard enterprise security practices.

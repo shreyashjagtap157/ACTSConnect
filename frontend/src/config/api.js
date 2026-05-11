@@ -1,29 +1,24 @@
 import axios from "axios";
 export const API_BASE_URL = 'http://localhost:5454';
 
-// Axios instance without Authorization header
+// Axios instance configured to send cookies
 export const api = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Helper to get latest JWT token
-export function getAuthHeaders() {
-  const jwtToken = localStorage.getItem("jwt");
-  return jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {};
-}
-
 // User-related API calls matching backend endpoints
 export const userApi = {
-  getPosts: () => api.get('/api/user/posts', { headers: getAuthHeaders() }),
-  createPost: (data) => api.post('/api/user/post/create', data, { headers: getAuthHeaders() }),
-  editPost: (postId, data) => api.post(`/api/user/post/edit/${postId}`, data, { headers: getAuthHeaders() }),
-  deletePost: (postId) => api.delete(`/api/user/post/delete/${postId}`, { headers: getAuthHeaders() }),
-  followUser: (userId) => api.post(`/api/user/follow/${userId}`, {}, { headers: getAuthHeaders() }),
-  unfollowUser: (userId) => api.post(`/api/user/unfollow/${userId}`, {}, { headers: getAuthHeaders() }),
-  createComment: (data) => api.post('/api/user/comment/create', data, { headers: getAuthHeaders() }),
-  searchUsers: (searchData) => api.post('/api/user/search', searchData, { headers: getAuthHeaders() }),
-  getUser: (id) => api.get(`/api/user/${id}`, { headers: getAuthHeaders() }),
+  getPosts: () => api.get('/api/user/posts'),
+  createPost: (data) => api.post('/api/user/post/create', data),
+  editPost: (postId, data) => api.post(`/api/user/post/edit/${postId}`, data),
+  deletePost: (postId) => api.delete(`/api/user/post/delete/${postId}`),
+  followUser: (userId) => api.post(`/api/user/follow/${userId}`, {}),
+  unfollowUser: (userId) => api.post(`/api/user/unfollow/${userId}`, {}),
+  createComment: (data) => api.post('/api/user/comment/create', data),
+  searchUsers: (searchData) => api.post('/api/user/search', searchData),
+  getUser: (id) => api.get(`/api/user/${id}`),
 };

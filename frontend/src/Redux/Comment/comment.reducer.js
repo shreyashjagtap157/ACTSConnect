@@ -27,7 +27,7 @@ import {
         return {
           ...state,
           create: false,
-          erro: null,
+          error: null,
           loading:true
         };
       case CREATE_COMMENT_SUCCESS:
@@ -44,7 +44,38 @@ import {
           error: action.payload,
           loading:false
         };
-  
+      case LIKE_COMMENT_REQUEST:
+      case DELETE_COMMENT_REQUEST:
+        return {
+          ...state,
+          error: null,
+          loading: true,
+          likingComment: action.type === LIKE_COMMENT_REQUEST,
+          deletingComment: action.type === DELETE_COMMENT_REQUEST,
+        };
+      case LIKE_COMMENT_SUCCESS:
+        return {
+          ...state,
+          error: null,
+          loading: false,
+          likingComment: false,
+        };
+      case DELETE_COMMENT_SUCCESS:
+        return {
+          ...state,
+          error: null,
+          loading: false,
+          deletingComment: false,
+        };
+      case LIKE_COMMENT_FAILURE:
+      case DELETE_COMMENT_FAILURE:
+        return {
+          ...state,
+          error: action.payload,
+          loading: false,
+          likingComment: false,
+          deletingComment: false,
+        };
       default:
         return state;
     }

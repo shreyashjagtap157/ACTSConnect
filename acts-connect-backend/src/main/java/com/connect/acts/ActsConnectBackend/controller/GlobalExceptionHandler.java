@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ApiResponse<String> handleIllegalArgumentException(IllegalArgumentException ex) {
         logger.warn("Illegal argument: {}", ex.getMessage());
-        return ApiResponse.error(ex.getMessage(), null);
+        return ApiResponse.error("Invalid argument provided", null);
     }
 
     @ExceptionHandler(Exception.class)

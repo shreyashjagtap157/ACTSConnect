@@ -50,7 +50,6 @@ const Demo = () => {
 
   const handleSend = (callType) => {
     const callee = document.querySelector('#userID').value;
-    console.log("calleeeeeeeeeeeeeeeeeeeeeee ", callee);
     if (!callee) {
       alert('userID cannot be empty!!');
       return;
@@ -66,7 +65,6 @@ const Demo = () => {
       timeout: 60,
     })
       .then((res) => {
-        console.warn(res);
         if (res.errorInvitees.length) {
           alert('The user does not exist or is offline.');
         }

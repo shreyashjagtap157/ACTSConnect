@@ -49,15 +49,17 @@ export const getUsersPost = (userId) => async (dispatch) => {
 };
 
 // Like Post (not implemented in backend, placeholder)
+
 export const likePost = (postId) => async (dispatch) => {
   dispatch({ type: LIKE_POST_REQUEST });
   try {
-    // Placeholder: implement when backend supports
-    dispatch({ type: LIKE_POST_SUCCESS, payload: { id: postId } });
+    const { data } = await userApi.likePost(postId);
+    dispatch({ type: LIKE_POST_SUCCESS, payload: data.data || { id: postId } });
   } catch (error) {
     dispatch({ type: LIKE_POST_FAILUER, payload: error.message || "Network error" });
   }
 };
+
 
 // Save Post (not implemented in backend, placeholder)
 export const savePost = (postId) => async (dispatch) => {

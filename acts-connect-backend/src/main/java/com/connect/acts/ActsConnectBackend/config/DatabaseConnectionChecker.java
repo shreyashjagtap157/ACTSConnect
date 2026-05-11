@@ -29,7 +29,7 @@ public class DatabaseConnectionChecker {
         throw new SQLException("Connection is not valid.");
       }
     } catch (SQLException e) {
-      logger.error("Failed to establish database connection", e);
+      logger.error("Failed to establish database connection: {}", e.getMessage());
       throw new IllegalStateException("Database connection failed", e);
     }
   }
