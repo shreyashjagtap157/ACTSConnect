@@ -55,22 +55,6 @@ export const loginUser = (loginData) => async (dispatch) => {
   }
 };
 
-// export const loginWithGoogleAction = (data) => async (dispatch) => {
-//   dispatch({type:GOOGLE_LOGIN_REQUEST});
-//   try {
-//     const response = await axios.post(`${API_BASE_URL}/auth/signin/google`, data);
-//     const user = response.data;
-//     console.log("login with google user -: ", user);
-//     if (user.jwt) {
-//       localStorage.setItem("jwt", user.jwt);
-//     }
-//     dispatch({type:GOOGLE_LOGIN_SUCCESS,payload:user.jwt});
-//   } catch (error) {
-//     dispatch({type:GOOGLE_LOGIN_FAILURE, payload: error.message || "An error occurred during login."});
-//   }
-// };
-
-// /signin/google
 
 export const registerUser = (userData) => async (dispatch) => {
   dispatch({type:REGISTER_REQUEST});
