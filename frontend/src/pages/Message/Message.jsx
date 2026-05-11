@@ -69,12 +69,8 @@ const Message = () => {
   const [stompClient, setStompClient] = useState(null);
   const [inputMessage, setInputMessage] = useState("");
 
-  const onConnect = (frem) => {
-    console.log("connect frem : ", frem);
-  };
-  const onErr = (err) => {
-    console.log("error when connect ", err);
-  };
+  const onConnect = () => {};
+  const onErr = () => {};
 
   useEffect(() => {
     const sock = new SockJS("http://localhost:5454/ws");
@@ -98,12 +94,7 @@ const Message = () => {
   });
 
   const onMessageRecive = (payload) => {
-    console.log("onMessageRecive ............. -----------", payload);
-
-    console.log("recive message -  - - - - - - -  -", JSON.parse(payload.body));
-
     const recievedMessage = JSON.parse(payload.body);
-
     setMessages([...messages, recievedMessage]);
   };
 

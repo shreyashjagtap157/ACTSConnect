@@ -13,6 +13,7 @@ import java.sql.SQLException;
 public class DatabaseConnectionChecker {
 
   private static final Logger logger = LoggerFactory.getLogger(DatabaseConnectionChecker.class);
+
   private final DataSource dataSource;
 
   public DatabaseConnectionChecker(DataSource dataSource) {
@@ -28,7 +29,7 @@ public class DatabaseConnectionChecker {
         throw new SQLException("Connection is not valid.");
       }
     } catch (SQLException e) {
-      logger.error("Failed to establish database connection: {}", e.getMessage(), e);
+      logger.error("Failed to establish database connection: {}", e.getMessage());
       throw new IllegalStateException("Database connection failed", e);
     }
   }
