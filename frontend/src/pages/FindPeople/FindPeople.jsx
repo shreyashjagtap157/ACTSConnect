@@ -62,7 +62,7 @@ const FindPeople = () => {
 
         <Grid container spacing={2} alignItems="center" sx={{ mb: 3 }}>
           <Grid item xs={12} md={8}>
-            <SearchUser handleClick={(userId) => console.log(`Clicked on user ${userId}`)} />
+            <SearchUser handleClick={() => {}} />
           </Grid>
           <Grid item xs={12} md={4}>
             {/* Optional: You can place other filters here if needed */}
