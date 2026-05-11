@@ -1,19 +1,22 @@
 package com.connect.acts.ActsConnectBackend;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class ActsConnectBackendApplication {
 
+	private static final Logger logger = LoggerFactory.getLogger(ActsConnectBackendApplication.class);
+
 	public static void main(String[] args) {
 		Dotenv dotenv;
 		try {
 			dotenv = Dotenv.load();
 		} catch (Exception e) {
-			System.err.println("Failed to load .env file: " + e.getMessage());
-			e.printStackTrace();
+			logger.error("Failed to load .env file: {}", e.getMessage(), e);
 			System.exit(1);
 			return;
 		}
@@ -36,13 +39,11 @@ public class ActsConnectBackendApplication {
 			// Set CORS origin
 			setEnvVar("CORS_ORIGINS", dotenv);
 		} catch (IllegalArgumentException e) {
-			System.err.println("Missing required environment variable: " + e.getMessage());
-			e.printStackTrace();
+			logger.error("Missing required environment variable: {}", e.getMessage(), e);
 			System.exit(1);
 			return;
 		} catch (Exception e) {
-			System.err.println("Error loading environment variables: " + e.getMessage());
-			e.printStackTrace();
+			logger.error("Error loading environment variables: {}", e.getMessage(), e);
 			System.exit(1);
 			return;
 		}
