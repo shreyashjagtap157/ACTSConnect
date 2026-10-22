@@ -1,217 +1,44 @@
-# ActsConnect
+# ACTSConnect Frontend
 
-ActsConnect is a comprehensive full-stack web application designed for seamless interaction among users, featuring content sharing and professional networking capabilities. Built with React.js for the frontend and Spring Boot for the backend, ActsConnect offers a modern, user-friendly experience for connecting with alumni and peers.
+This directory contains the React frontend component used by the ACTSConnect repository, a student/alumni networking application intended to support profiles, community posts, career opportunities, referrals and related campus services.
 
-## Table of Contents
+> **Repository status — 22 October 2026:** This nested frontend is part of the primary repository. Its current API integration and production readiness are not established by a successful frontend build alone. See the root README for repository-wide validation status.
 
-1. [Project Overview](#project-overview)
-2. [Technologies](#technologies)
-3. [Setup](#setup)
-   - [Prerequisites](#prerequisites)
-   - [Frontend Installation](#frontend-installation)
-   - [Backend Installation](#backend-installation)
-4. [Usage](#usage)
-5. [Folder Structure](#folder-structure)
-6. [API Endpoints](#api-endpoints)
-7. [Contributing](#contributing)
-8. [License](#license)
+## Technology
 
-## Project Overview
+The checked-in package manifest identifies React 18, React Router, Material UI, Redux Toolkit, Axios, Formik and Tailwind CSS, among other dependencies. Always use the versioned `package.json` and lockfile in this checkout as the dependency source of truth.
 
-ActsConnect is designed to facilitate connections between students, alumni, and professionals. Key features include:
+## Local development
 
-- **User Profiles:** Users can create and manage profiles, connect with others, and share updates.
-- **Content Sharing:** Users can post updates, articles, and media content.
-- **Networking:** Connect with alumni and peers for advice, referrals, and networking opportunities.
-- **Accomodation:** Students can find many places for accomodation near CDAC and contact them.
-- **Job Searching:** Students and Alumini can post job openings that they know so that everyone can take that opportunity.
+Requirements: a supported Node.js/npm installation.
 
-## Technologies
-
-### Frontend
-
-- **React.js**: A JavaScript library for building dynamic and interactive user interfaces.
-- **Material-UI**: A React component library for a consistent and modern design.
-- **Axios**: A promise-based HTTP client for API requests.
-- **Tailwind CSS**: A utility-first CSS framework for custom styling.
-- **Formik**: A tool for making and managing form like structure
-
-### Backend
-
-- **Spring Boot**: A framework for building production-ready Java applications with minimal configuration.
-- **MySQL**: A relational database management system for storing user data and application content.
-- **JWT (JSON Web Token)**: For secure user authentication and authorization.
-- **Spring Security**: Provides authentication and authorization features for the application.
-
-### Development Tools
-
-- **Webpack**: A module bundler for JavaScript applications.
-- **Babel**: A JavaScript compiler for using modern JavaScript features.
-- **ESLint**: A linter for identifying and fixing problems in JavaScript code.
-- **Prettier**: A code formatter to maintain consistent code style.
-
-## Setup
-
-### Prerequisites
-
-Before starting, ensure you have the following installed:
-
-- **Node.js**: For running the frontend.
-- **Java JDK**: For the backend.
-- **Maven**: A build automation tool for Java projects.
-- **MySQL**: For managing the database.
-
-### Frontend Installation
-
-1. Clone the repository:
-
-    ```bash
-    git clone https://github.com/AbhishekPandey10/actsconnect_fullstack.git
-    ```
-
-2. Navigate to the frontend directory:
-
-    ```bash
-    cd actsconnect/actsconnect_frontend
-    ```
-
-3. Install dependencies:
-
-    ```bash
-    npm install
-    ```
-
-4. Start the development server:
-
-    ```bash
-    npm start
-    ```
-
-### Backend Installation
-
-1. Navigate to the backend directory:
-
-    ```bash
-    cd actsconnect/actsconnect_backend
-    ```
-
-2. Install dependencies:
-
-    ```bash
-    mvn install
-    ```
-
-3. Configure the `application.properties` file with your database credentials and other settings.
-
-4. Start the backend server:
-
-    ```bash
-    mvn spring-boot:run
-    ```
-
-## Usage
-
-- **Frontend Application:** Access it at [http://localhost:3000](http://localhost:3000).
-- **Backend API:** Available at [http://localhost:8080](http://localhost:8080).
-- **Database:** MySQL database is used for this application. You can use any other database as well
-- **Change this at the end**
-
-## Folder Structure
-
-### Frontend
-
-```
-frontend/
-├── public/
-│   └── index.html  
-├── src/
-│   ├── components/  
-│   ├── pages/       
-│   ├── App.js       
-│   ├── index.js      
-│   ├── index.css     
-│   ├── utils       
-│   ├── config      
-│   ├── Redux      
-│   ├── theam    
-│   ├── Routes       
-│   ├── App.test.js      
-│   └── ...         
-├── tailwind.config.js  
-├── package.json      
-├── package-lock.json      
-├── .gitignore      
-└── ...               
+```bash
+npm ci
+npm start
 ```
 
-### Backend
+To create a production build:
 
+```bash
+npm run build
 ```
-Backend:
-├───.idea
-├───.mvn
-│   └───wrapper
-├───src
-│   ├───main
-│   │   ├───java
-│   │   │   └───com
-│   │   │       └───connect
-│   │   │           └───acts
-│   │   │               └───ActsConnectBackend
-│   │   │                   ├───config
-│   │   │                   ├───controller
-│   │   │                   ├───dto
-│   │   │                   ├───model
-│   │   │                   ├───repo
-│   │   │                   ├───security
-│   │   │                   ├───service
-│   │   │                   └───utils
-│   │   └───resources
-│   └───test
-│       └───java
-│           └───com
-│               └───connect
-│                   └───acts
-│                       └───ActsConnectBackend
-└───target
-    ├───classes
-    │   └───com
-    │       └───connect
-    │           └───acts
-    │               └───ActsConnectBackend
-    │                   ├───config
-    │                   ├───controller
-    │                   ├───dto
-    │                   ├───model
-    │                   ├───repo
-    │                   ├───security
-    │                   ├───service
-    │                   └───utils
-    └───generated-sources
-        └───annotations
+
+Run the tests configured by the repository where practical:
+
+```bash
+npm test
 ```
-## API Endpoints
 
-The application provides the following API endpoints:
+The current application may expect backend APIs, environment configuration and authentication services. Configure local endpoints without committing secrets. Successful frontend compilation alone does not verify API integration or user workflows.
 
-- `GET /api/posts` - Retrieve all posts.
-- `POST /api/posts` - Create a new post.
-- `GET /api/posts/{id}` - Retrieve a single post by ID.
-- `PUT /api/posts/{id}` - Update a post by ID.
-- `DELETE /api/posts/{id}` - Delete a post by ID.
-- `POST /api/auth` - Authenticate a user and return a JWT.
+## Current maintenance priorities
 
-## Contributing
+1. Compare this repository with `ACTSConnect/frontend/` in the primary repository and select one canonical source.
+2. Correct any API endpoints or setup instructions that refer to a different repository layout.
+3. Verify login/session handling, API errors, authorization expectations and real-time/video integrations.
+4. Add CI for clean dependency installation, production build, lint and tests.
+5. Keep dependency/security updates aligned with the backend integration contract.
 
-We welcome contributions to improve ActsConnect! To contribute:
+## License and provenance
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/your-feature`).
-3. Make your changes.
-4. Commit your changes (`git commit -am 'Add new feature'`).
-5. Push to the branch (`git push origin feature/your-feature`).
-6. Open a Pull Request.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+Check the repository's license and third-party dependency terms before redistribution. This repository is associated with the broader ACTSConnect project; do not assume it is the authoritative or latest frontend without comparing histories.
