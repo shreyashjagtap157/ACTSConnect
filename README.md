@@ -60,7 +60,7 @@ cd acts-connect-backend
 # Linux/macOS
 ./mvnw verify
 # Windows PowerShell
-.`mvnw.cmd` verify
+.\mvnw.cmd verify
 ```
 
 Configure database credentials and authentication secrets through a local, untracked environment/configuration file. Never commit production credentials. The commands above are build checks; they do not prove frontend/backend integration or successful production deployment.
